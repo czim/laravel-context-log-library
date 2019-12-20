@@ -30,11 +30,6 @@
         }
     },
     "extra": {
-        "laravel": {
-            "providers": [
-                "Czim\\LaravelContextLogging\\Providers\\ContextLoggingServiceProvider"
-            ]
-        }
     },
     "scripts": {
         "test": "phpunit"
