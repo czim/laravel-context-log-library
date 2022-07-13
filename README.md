@@ -15,7 +15,8 @@ It is not a requirement for using JSON context logging.
 
  Laravel             | Package
 :--------------------|:--------
- 6.0 and up          | 1.0
+ 6.0 - 8.0           | 1.0
+ 9.0 and up          | 1.1
 
 
 ## Installation
