@@ -12,7 +12,8 @@
     "require": {
         "czim/laravel-json-context-logging": "*",
         "illuminate/support": "*",
-        "myclabs/php-enum": "*"
+        "myclabs/php-enum": "*",
+        "psr/log": "^2|^3"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0",
