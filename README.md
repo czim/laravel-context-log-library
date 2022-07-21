@@ -17,6 +17,11 @@ It is not a requirement for using JSON context logging.
 :--------------------|:--------
  6.0 and up          | 1.0
 
+psr/log             | Package
+:--------------------|:--------
+1.0                  | 1.0
+2.0 - 3.0            | 2.0
+
 
 ## Installation
 
