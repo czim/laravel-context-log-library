@@ -132,7 +132,7 @@ abstract class AbstractLogger implements LoggerInterface
 
     protected function getDirectory(): string
     {
-        $this->getLogPath();
+        return $this->getLogPath();
     }
 
     protected function prepareLogPath(): string
