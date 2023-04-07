@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Preppers;
 
 use Czim\LaravelContextLogging\Contracts\FormattedForLogInterface;
@@ -17,9 +19,9 @@ class JsonContextEventLogPrepper extends PlainEventLogPrepper
     /**
      * Extra data to be deeper nested under the 'data' key.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $customExtra = [];
+    protected array $customExtra = [];
 
 
     public function format(AbstractDebugEvent $event): FormattedForLogInterface
@@ -46,7 +48,7 @@ class JsonContextEventLogPrepper extends PlainEventLogPrepper
 
         $this->resetFluent();
 
-        return new FormattedForLog($level, $message, $extra);
+        return new FormattedForLog($level->value, $message, $extra);
     }
 
     /**
@@ -59,7 +61,7 @@ class JsonContextEventLogPrepper extends PlainEventLogPrepper
 
     protected function addGeneralSessionContext(): void
     {
-        if ( ! $this->event->getCategory()) {
+        if (! $this->event->getCategory()) {
             return;
         }
 
@@ -76,7 +78,7 @@ class JsonContextEventLogPrepper extends PlainEventLogPrepper
         return true;
     }
 
-    protected function getDefaultVerbosity(): int
+    protected function getDefaultVerbosity(): VerbosityEnum
     {
         return VerbosityEnum::VERY_VERBOSE;
     }

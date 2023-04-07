@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Preppers;
 
 use Czim\LaravelContextLogging\Contracts\DebugEventLogPrepperInterface;
@@ -8,38 +10,25 @@ use Czim\LaravelContextLogging\Data\FormattedForLog;
 use Czim\LaravelContextLogging\Enums\LogLevelEnum;
 use Czim\LaravelContextLogging\Enums\VerbosityEnum;
 use Czim\LaravelContextLogging\Events\AbstractDebugEvent;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 
 /**
- * For preparing, as best as possible given the context, a debug event for logging as a PSR log write.
+ * For preparing, as well as possible given the context, a debug event for logging as a PSR log write.
  */
 class PlainEventLogPrepper implements DebugEventLogPrepperInterface
 {
-    /**
-     * @var string
-     */
-    protected $level = LogLevelEnum::DEBUG;
+    protected LogLevelEnum $level = LogLevelEnum::DEBUG;
+    protected string $message = '';
 
     /**
-     * @var string
+     * @var array<string, mixed>
      */
-    protected $message = '';
+    protected array $extra = [];
 
-    /**
-     * @var array
-     */
-    protected $extra = [];
-
-
-    /**
-     * @var AbstractDebugEvent
-     */
-    protected $event;
-
-    /**
-     * @var int
-     * @see VerbosityEnum
-     */
-    protected $verbosity;
+    protected AbstractDebugEvent $event;
+    protected VerbosityEnum $verbosity;
 
 
     public function __construct()
@@ -48,7 +37,7 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
     }
 
 
-    public function verbosity(int $verbosity): DebugEventLogPrepperInterface
+    public function verbosity(VerbosityEnum $verbosity): DebugEventLogPrepperInterface
     {
         $this->verbosity = $verbosity;
 
@@ -73,8 +62,9 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
 
         $this->resetFluent();
 
-        return new FormattedForLog($level, $message, $extra);
+        return new FormattedForLog($level->value, $message, $extra);
     }
+
 
     protected function addGeneralSessionContext(): void
     {
@@ -85,14 +75,14 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
     {
         $data = [];
 
-        if (app()->runningInConsole()) {
+        if (App::runningInConsole()) {
             $data['console'] = true;
         } elseif ($this->isVerbose()) {
-            $data['sessionId'] = session()->getId();
-            $data['ip']        = request()->ip();
+            $data['sessionId'] = Session::getId();
+            $data['ip']        = Request::ip();
         }
 
-        if ( ! count($data)) {
+        if (! count($data)) {
             return;
         }
 
@@ -103,7 +93,7 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
     {
         $exception = $this->event->getException();
 
-        if ( ! $exception) {
+        if (! $exception) {
             return;
         }
 
@@ -132,7 +122,7 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
 
     protected function getCategoryAsPrefix(): string
     {
-        if ( ! $this->event->getCategory()) {
+        if (! $this->event->getCategory()) {
             return '';
         }
 
@@ -141,24 +131,25 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
 
     protected function isVerbose(): bool
     {
-        return $this->verbosity >= VerbosityEnum::VERBOSE;
+        return $this->verbosity->value >= VerbosityEnum::VERBOSE->value;
     }
 
     protected function isVeryVerbose(): bool
     {
-        return $this->verbosity > VerbosityEnum::VERBOSE;
+        return $this->verbosity->value > VerbosityEnum::VERBOSE->value;
     }
 
     protected function resetFluent(): void
     {
-        $this->event     = null;
+        unset($this->event);
+
         $this->verbosity = $this->getDefaultVerbosity();
         $this->level     = LogLevelEnum::DEBUG;
         $this->message   = '';
         $this->extra     = [];
     }
 
-    protected function getDefaultVerbosity(): int
+    protected function getDefaultVerbosity(): VerbosityEnum
     {
         return VerbosityEnum::VERBOSE;
     }

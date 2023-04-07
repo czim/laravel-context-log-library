@@ -1,54 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Config;
 
 use Czim\LaravelContextLogging\Contracts\ContextConfigInterface;
+use Illuminate\Support\Facades\App;
 
 class ContextConfig implements ContextConfigInterface
 {
-    /**
-     * @var string
-     */
-    protected $context;
-
-    /**
-     * @var string|null
-     */
-    protected $path;
-
-    /**
-     * @var null
-     */
-    protected $fileName;
-
-    /**
-     * @var bool
-     */
-    protected $enabled;
-
-    /**
-     * @var int
-     */
-    protected $maxFiles;
-
-
     public function __construct(
-        string $context,
-        ?string $path = null,
-        ?string $fileName = null,
-        bool $enabled = true,
-        $maxFiles = 14
+        protected readonly string $context,
+        protected readonly ?string $path = null,
+        protected readonly ?string $fileName = null,
+        protected readonly bool $enabled = true,
+        protected readonly int $maxFiles = 14,
     ) {
-        $this->context  = $context;
-        $this->path     = $path;
-        $this->fileName = $fileName;
-        $this->enabled  = $enabled;
-        $this->maxFiles = $maxFiles;
     }
 
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function enabled(): bool
     {
@@ -56,7 +28,7 @@ class ContextConfig implements ContextConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function context(): string
     {
@@ -64,7 +36,7 @@ class ContextConfig implements ContextConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function fileName(): ?string
     {
@@ -72,7 +44,7 @@ class ContextConfig implements ContextConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function maxFiles(): int
     {
@@ -82,7 +54,7 @@ class ContextConfig implements ContextConfigInterface
     public function path(): string
     {
         if ($this->path === null) {
-            return storage_path('logs/context');
+            return App::storagePath('logs/context');
         }
 
         return $this->path;

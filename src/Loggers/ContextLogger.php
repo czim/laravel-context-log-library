@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Loggers;
 
 use Czim\LaravelContextLogging\Contracts\ContextConfigInterface;
@@ -7,21 +9,14 @@ use Czim\LaravelJsonContextLogging\Contracts\LoggerFactoryInterface;
 
 class ContextLogger extends AbstractLogger
 {
-    /**
-     * @var string
-     */
-    protected $filename;
-
-    /**
-     * @var string
-     */
-    protected $path;
+    protected string $filename;
+    protected string $path;
 
 
     public function __construct(ContextConfigInterface $config)
     {
         /** @var LoggerFactoryInterface $factory */
-        $factory = app(LoggerFactoryInterface::class);
+        $factory = resolve(LoggerFactoryInterface::class);
 
         $this->filename = ($config->fileName() ?? $config->context()) . '.log';
         $this->path     = $config->path();

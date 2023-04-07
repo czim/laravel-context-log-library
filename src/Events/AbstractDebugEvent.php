@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Events;
 
 use Czim\LaravelContextLogging\Enums\LogLevelEnum;
@@ -9,59 +11,49 @@ use UnexpectedValueException;
 
 abstract class AbstractDebugEvent
 {
-    /**
-     * @var string|null
-     */
-    protected $channel;
+    protected ?string $channel = null;
+    protected LogLevelEnum $logLevel = LogLevelEnum::INFO;
+    protected string $message;
 
     /**
-     * @var string
+     * @var array<string, mixed>
      */
-    protected $logLevel = LogLevelEnum::INFO;
+    protected array $extra;
 
-    /**
-     * @var string
-     */
-    protected $message;
-
-    /**
-     * @var array
-     */
-    protected $extra;
-
-    /**
-     * @var string|null
-     */
-    protected $category;
-
-    /**
-     * @var Throwable|null
-     */
-    protected $exception;
+    protected ?string $category = null;
+    protected ?Throwable $exception = null;
 
     /**
      * Whether we should log this with high verbosity.
      *
      * @var bool
      */
-    protected $verbose = false;
+    protected bool $verbose = false;
 
     /**
      * Whether we should log this with less than default verbosity.
      *
      * @var bool
      */
-    protected $notVerbose = false;
+    protected bool $notVerbose = false;
 
 
+    /**
+     * @param string               $message
+     * @param array<string, mixed> $extra
+     */
     public function __construct(string $message, array $extra = [])
     {
         $this->message = $message;
         $this->extra   = $extra;
     }
 
-
-    public static function make(string $message, array $extra = []): AbstractDebugEvent
+    /**
+     * @param string               $message
+     * @param array<string, mixed> $extra
+     * @return AbstractDebugEvent
+     */
+    public static function make(string $message, array $extra = []): static
     {
         return new static($message, $extra);
     }
@@ -73,11 +65,11 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @param string     $key       if array, overwrites current extra data
+     * @param string     $key   if array, overwrites current extra data
      * @param mixed|null $value
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function extra(string $key, $value = null): AbstractDebugEvent
+    public function extra(string $key, mixed $value = null): static
     {
         Arr::set($this->extra, $key, $value);
 
@@ -85,10 +77,10 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @param array $extra
-     * @return AbstractDebugEvent|$this
+     * @param array<string, mixed> $extra
+     * @return static|$this
      */
-    public function extraArray(array $extra): AbstractDebugEvent
+    public function extraArray(array $extra): static
     {
         $this->extra = $extra;
 
@@ -97,9 +89,9 @@ abstract class AbstractDebugEvent
 
     /**
      * @param string $channel
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function channel(string $channel): AbstractDebugEvent
+    public function channel(string $channel): static
     {
         if ( ! $this->isValidChannel($channel)) {
             throw new UnexpectedValueException("Invalid debug event channel: '{$channel}'");
@@ -112,9 +104,9 @@ abstract class AbstractDebugEvent
 
     /**
      * @param string|null $name
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function category(?string $name): AbstractDebugEvent
+    public function category(?string $name): static
     {
         $this->category = $name;
 
@@ -123,9 +115,9 @@ abstract class AbstractDebugEvent
 
     /**
      * @param Throwable $exception
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function exception(Throwable $exception): AbstractDebugEvent
+    public function exception(Throwable $exception): static
     {
         $this->exception = $exception;
 
@@ -133,9 +125,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function verbose(): AbstractDebugEvent
+    public function verbose(): static
     {
         $this->notVerbose = false;
         $this->verbose    = true;
@@ -144,9 +136,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function notVerbose(): AbstractDebugEvent
+    public function notVerbose(): static
     {
         $this->verbose    = false;
         $this->notVerbose = true;
@@ -155,9 +147,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function critical(): AbstractDebugEvent
+    public function critical(): static
     {
         $this->logLevel = LogLevelEnum::CRITICAL;
 
@@ -165,9 +157,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function alert(): AbstractDebugEvent
+    public function alert(): static
     {
         $this->logLevel = LogLevelEnum::ALERT;
 
@@ -175,9 +167,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function error(): AbstractDebugEvent
+    public function error(): static
     {
         $this->logLevel = LogLevelEnum::ERROR;
 
@@ -185,9 +177,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function warning(): AbstractDebugEvent
+    public function warning(): static
     {
         $this->logLevel = LogLevelEnum::WARNING;
 
@@ -195,9 +187,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function notice(): AbstractDebugEvent
+    public function notice(): static
     {
         $this->logLevel = LogLevelEnum::NOTICE;
 
@@ -205,9 +197,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function info(): AbstractDebugEvent
+    public function info(): static
     {
         $this->logLevel = LogLevelEnum::INFO;
 
@@ -215,9 +207,9 @@ abstract class AbstractDebugEvent
     }
 
     /**
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function debug(): AbstractDebugEvent
+    public function debug(): static
     {
         $this->logLevel = LogLevelEnum::DEBUG;
 
@@ -230,9 +222,14 @@ abstract class AbstractDebugEvent
         return $this->channel ?? $this->getDefaultChannel();
     }
 
-    public function getLogLevel(): string
+    public function getLogLevel(): LogLevelEnum
     {
         return $this->logLevel;
+    }
+
+    public function getLogLevelAsString(): string
+    {
+        return $this->logLevel->value;
     }
 
     public function getMessage(): string
@@ -270,9 +267,9 @@ abstract class AbstractDebugEvent
      *
      * @param bool|null $value
      * @param callable  $callback
-     * @return AbstractDebugEvent|$this
+     * @return static|$this
      */
-    public function when(?bool $value, callable $callback): AbstractDebugEvent
+    public function when(?bool $value, callable $callback): static
     {
         if ($value) {
             call_user_func($callback, $this);

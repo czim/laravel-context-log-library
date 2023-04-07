@@ -1,34 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Data;
 
 use Czim\LaravelContextLogging\Contracts\FormattedForLogInterface;
 
 class FormattedForLog implements FormattedForLogInterface
 {
-    /**
-     * @var string
-     */
-    protected $level;
-
-    /**
-     * @var string
-     */
-    protected $message;
-
-    /**
-     * @var array
-     */
-    protected $extra;
-
-
-    public function __construct(string $level, string $message, array $extra)
-    {
-        $this->level   = $level;
-        $this->message = $message;
-        $this->extra   = $extra;
+    public function __construct(
+        protected readonly string $level,
+        protected readonly string $message,
+        protected readonly array $extra,
+    ) {
     }
-
 
     public function getLevel(): string
     {
@@ -40,11 +25,17 @@ class FormattedForLog implements FormattedForLogInterface
         return $this->message;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getExtra(): array
     {
         return $this->extra;
     }
 
+    /**
+     * @return array{0: string, 1: string, 2: array<string, mixed>}
+     */
     public function toArray(): array
     {
         return [

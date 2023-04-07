@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Config;
 
 use Czim\LaravelContextLogging\Contracts\ContextConfigInterface;
@@ -9,11 +11,7 @@ use Illuminate\Support\Facades\Config;
 
 class StandardJsonContextConfigSource
 {
-    /**
-     * @var bool
-     */
-    protected $jsonContextEnabled = true;
-
+    protected bool $jsonContextEnabled = true;
 
     public function enableContextLogging(): StandardJsonContextConfigSource
     {
@@ -30,7 +28,7 @@ class StandardJsonContextConfigSource
     }
 
     /**
-     * @return ContextConfigInterface[]     keyed by context string
+     * @return array<string, ContextConfigInterface> by context string
      */
     public function makeConfigArray(): array
     {
@@ -39,8 +37,7 @@ class StandardJsonContextConfigSource
         return array_combine(
             array_keys($channels),
             array_map(
-                function (array $config, string $key) {
-
+                function (array $config, string $key): ContextConfigInterface {
                     $file = Arr::get($config, 'file');
 
                     if ($file !== null) {
@@ -56,18 +53,28 @@ class StandardJsonContextConfigSource
                     );
                 },
                 $channels,
-                array_keys($channels)
+                array_keys($channels),
             )
         );
     }
 
     protected function getBaseLogPath(): string
     {
-        return Config::get('json-context-logging.default.path', App::storagePath('logs/context'));
+        return Config::get('json-context-logging.default.path', $this->getDefaultContextLogStoragePath());
     }
 
     protected function getRotatingMaxFiles(): int
     {
-        return Config::get('json-context-logging.default.handler.parameters.max_files', 21);
+        return Config::get('json-context-logging.default.handler.parameters.max_files', $this->getRotatingMaxFiles());
+    }
+
+    protected function getDefaultContextLogStoragePath(): string
+    {
+        return App::storagePath('logs/context');
+    }
+
+    protected function getDefaultMaxRotatingFiles(): int
+    {
+        return 21;
     }
 }

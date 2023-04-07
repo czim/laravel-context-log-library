@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Factories;
 
 use Czim\LaravelContextLogging\Contracts\ContextConfigInterface;
@@ -12,13 +14,13 @@ use UnexpectedValueException;
 class ContextLoggerFactory implements ContextLoggerFactoryInterface
 {
     /**
-     * @var ContextConfigInterface[]
+     * @var array<string, ContextConfigInterface>
      */
-    protected $configs;
+    protected array $configs = [];
 
 
     /**
-     * @param ContextConfigInterface[] $configs     keyed by context string
+     * @param array<string, ContextConfigInterface> $configs by context string
      */
     public function setConfigs(array $configs): void
     {
@@ -49,7 +51,7 @@ class ContextLoggerFactory implements ContextLoggerFactoryInterface
 
     protected function getConfig(string $context): ContextConfigInterface
     {
-        if ( ! array_key_exists($context, $this->configs)) {
+        if (! array_key_exists($context, $this->configs)) {
             throw new UnexpectedValueException("No context log config available for context: '{$context}'");
         }
 

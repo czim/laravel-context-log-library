@@ -8,11 +8,10 @@ use Czim\LaravelContextLogging\Events\AbstractDebugEvent;
 interface DebugEventLogPrepperInterface
 {
     /**
-     * @param int $verbosity
-     * @return DebugEventLogPrepperInterface
-     * @see VerbosityEnum
+     * @param VerbosityEnum $verbosity
+     * @return DebugEventLogPrepperInterface|$this
      */
-    public function verbosity(int $verbosity): DebugEventLogPrepperInterface;
+    public function verbosity(VerbosityEnum $verbosity): DebugEventLogPrepperInterface;
 
     public function format(AbstractDebugEvent $event): FormattedForLogInterface;
 }

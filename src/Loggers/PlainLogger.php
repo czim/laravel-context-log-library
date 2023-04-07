@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Loggers;
 
 use Czim\LaravelContextLogging\Contracts\ContextConfigInterface;
@@ -8,15 +10,8 @@ use Monolog\Logger;
 
 class PlainLogger extends AbstractLogger
 {
-    /**
-     * @var string
-     */
-    protected $filename;
-
-    /**
-     * @var string
-     */
-    protected $path;
+    protected string $filename;
+    protected string $path;
 
 
     public function __construct(ContextConfigInterface $config)

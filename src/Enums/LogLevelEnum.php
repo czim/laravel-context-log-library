@@ -1,27 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelContextLogging\Enums;
 
-use MyCLabs\Enum\Enum;
-
-/**
- * @method static LogLevelEnum DEBUG()
- * @method static LogLevelEnum INFO()
- * @method static LogLevelEnum NOTICE()
- * @method static LogLevelEnum WARNING()
- * @method static LogLevelEnum ERROR()
- * @method static LogLevelEnum CRITICAL()
- * @method static LogLevelEnum ALERT()
- * @method static LogLevelEnum EMERGENCY()
- */
-class LogLevelEnum extends Enum
+enum LogLevelEnum: string
 {
-    const DEBUG     = 'debug';
-    const INFO      = 'info';
-    const NOTICE    = 'notice';
-    const WARNING   = 'warning';
-    const ERROR     = 'error';
-    const CRITICAL  = 'critical';
-    const ALERT     = 'alert';
-    const EMERGENCY = 'emergency';
+    case DEBUG     = 'debug';
+    case INFO      = 'info';
+    case NOTICE    = 'notice';
+    case WARNING   = 'warning';
+    case ERROR     = 'error';
+    case CRITICAL  = 'critical';
+    case ALERT     = 'alert';
+    case EMERGENCY = 'emergency';
 }
