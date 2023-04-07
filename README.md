@@ -13,15 +13,16 @@ It is not a requirement for using JSON context logging.
 
 ## Version Compatibility
 
- Laravel             | Package
-:--------------------|:--------
- 6.0 and up          | 1.0
+| Laravel    | Package |
+|:-----------|:--------|
+| 6.0 - 8.0  | 1.0     |
+| 9.0 and up | 2.0     |
 
-psr/log             | Package
-:--------------------|:--------
-1.0                  | 1.0
-2.0 - 3.0            | 2.0
-
+| psr/log | Package |
+|:--------|:--------|
+| 1.0     | 1.0     |
+| 2.0     | 2.0     |
+| 3.0     | 3.0     |
 
 ## Installation
 
@@ -48,7 +49,7 @@ class AppServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->app->singleton(
             ContextLoggerFactoryInterface::class,
-            function () {
+            function (): void {
                 $factory = new ContextLoggerFactory();
                 $factory->setConfigs($this->makeLogContextConfigArray());
                 return $factory;
