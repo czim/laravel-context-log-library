@@ -65,7 +65,7 @@ class StandardJsonContextConfigSource
 
     protected function getRotatingMaxFiles(): int
     {
-        return Config::get('json-context-logging.default.handler.parameters.max_files', $this->getRotatingMaxFiles());
+        return Config::get('json-context-logging.default.handler.parameters.max_files', $this->getDefaultMaxRotatingFiles());
     }
 
     protected function getDefaultContextLogStoragePath(): string
