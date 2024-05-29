@@ -13,12 +13,17 @@ use Czim\LaravelContextLogging\Events\AbstractDebugEvent;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Throwable;
 
 /**
  * For preparing, as well as possible given the context, a debug event for logging as a PSR log write.
  */
 class PlainEventLogPrepper implements DebugEventLogPrepperInterface
 {
+    protected const MAX_TRACE_LINE_LENGTH   = 20;
+    protected const MAX_TRACE_STRING_LENGTH = 2000;
+
     protected LogLevelEnum $level = LogLevelEnum::DEBUG;
     protected string $message = '';
 
@@ -105,7 +110,7 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
         ];
 
         if ($this->isVerbose()) {
-            $data['trace'] = $exception->getTraceAsString();
+            $data['trace'] = $this->getLimitStackTraceAsString($exception);
         }
 
         if ($this->isVeryVerbose() && $exception->getPrevious()) {
@@ -118,6 +123,16 @@ class PlainEventLogPrepper implements DebugEventLogPrepperInterface
         }
 
         $this->extra['exception'] = $data;
+    }
+
+    protected function getLimitStackTraceAsString(Throwable $exception): string
+    {
+        $traceLines = explode("\n", $exception->getTraceAsString());
+        $traceLines = array_slice($traceLines, 0, static::MAX_TRACE_LINE_LENGTH);
+
+        $traceString = implode("\n", $traceLines);
+
+        return Str::limit($traceString, static::MAX_TRACE_STRING_LENGTH);
     }
 
     protected function getCategoryAsPrefix(): string
